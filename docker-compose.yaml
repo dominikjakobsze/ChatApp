@@ -1,0 +1,16 @@
+services:
+  mercure:
+    container_name: mercure
+    hostname: mercure
+    image: dunglas/mercure
+    restart: unless-stopped
+    environment:
+      MERCURE_PUBLISHER_JWT_KEY: 'tajne'
+      MERCURE_SUBSCRIBER_JWT_KEY: 'tajne'
+      SERVER_NAME: ':80'
+    command: /usr/bin/caddy run --config /etc/caddy/Caddyfile.dev
+    ports:
+      - 8888:80
+    volumes:
+      - mercure_data:/data
+      - mercure_config:/config
