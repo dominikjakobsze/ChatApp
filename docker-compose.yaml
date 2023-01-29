@@ -14,3 +14,17 @@ services:
     volumes:
       - mercure_data:/data
       - mercure_config:/config
+  db:
+    container_name: db
+    hostname: db
+    image: mysql:8.0
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: chat
+      MYSQL_DATABASE: chat
+      MYSQL_USER: chat
+      MYSQL_PASSWORD: chat
+    ports:
+      - 2400:3306
+    volumes:
+      - db_data:/var/lib/mysql
