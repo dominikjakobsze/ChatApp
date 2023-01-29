@@ -39,3 +39,9 @@ services:
     volumes:
       - redis-data:/data
       - redis-conf:/usr/local/etc/redis/redis.conf
+volumes:
+  mercure_data:
+  mercure_config:
+  db_data:
+  redis-data:
+  redis-conf:
