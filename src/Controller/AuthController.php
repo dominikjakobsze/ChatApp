@@ -18,13 +18,14 @@ class AuthController extends AbstractController
     #[Route('/api/register', name: 'AuthController_registerUser', methods: ['POST'])]
     public function registerUser(Request $request): JsonResponse
     {
-        $form = $this->createForm(RegisterForm::class);
-        $form->handleRequest($request);
-
+        $form = $this->createForm(RegisterForm::class, null, [
+            'csrf_protection' => false
+        ]);
+        $form->handleRequest($request)->submit($request->request->all());
         if ($form->isSubmitted() && $form->isValid()) {
             return $this->json([
-                "ok" => "ok"
-            ]);
+                "message" => "User registered successfully"
+            ], 200);
         }
 
         throw new BadRequestHttpException("Email or password is invalid");
