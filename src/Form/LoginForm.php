@@ -29,6 +29,6 @@ class LoginForm extends AbstractType
                         'max' => 60
                     ])
                 ]
-            ]);;
+            ]);
     }
 }

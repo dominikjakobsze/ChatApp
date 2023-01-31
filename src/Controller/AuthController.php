@@ -2,7 +2,9 @@
 
 namespace App\Controller;
 
+use App\Form\LoginForm;
 use App\Form\RegisterForm;
+use App\Service\LoginService;
 use App\Service\RegisterService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -35,9 +37,22 @@ class AuthController extends AbstractController
         throw new BadRequestHttpException("Email or password is invalid");
     }
 
+    /**
+     * @param Request $request
+     * @param LoginService $loginService
+     * @return JsonResponse
+     */
     #[Route('/api/login', name: 'AuthController_loginUser', methods: ['POST'])]
-    public function loginUser(Request $request)
+    public function loginUser(Request $request, LoginService $loginService): JsonResponse
     {
-        return $this->json(true);
+        $form = $this->createForm(LoginForm::class, null, [
+            'csrf_protection' => false
+        ]);
+        $form->handleRequest($request)->submit($request->request->all());
+        if ($form->isSubmitted() && $form->isValid()) {
+            $loginService->getUserFromEmail($form->getData()['email']);
+            return $this->json(true);
+        }
+        throw new BadRequestHttpException("Email or password is invalid");
     }
 }
