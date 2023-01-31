@@ -34,4 +34,10 @@ class AuthController extends AbstractController
 
         throw new BadRequestHttpException("Email or password is invalid");
     }
+
+    #[Route('/api/login', name: 'AuthController_loginUser', methods: ['POST'])]
+    public function loginUser(Request $request)
+    {
+        return $this->json(true);
+    }
 }
