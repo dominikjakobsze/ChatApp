@@ -4,6 +4,7 @@ namespace App\Security;
 
 use App\Entity\Auth;
 use App\Repository\AuthRepository;
+use App\Service\JWTService;
 use Firebase\JWT\JWT;
 use Firebase\JWT\Key;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
@@ -13,11 +14,14 @@ class SecurityWall
     private AuthRepository $authRepository;
     private string $secret;
     private string|array $jwt;
+    private string $exp;
     private Auth $auth;
+    private JWTService $jwtService;
 
-    public function __construct(AuthRepository $authRepository)
+    public function __construct(AuthRepository $authRepository, JWTService $JWTService)
     {
         $this->authRepository = $authRepository;
+        $this->jwtService = $JWTService;
     }
 
     public function setKey(string $secret): self
@@ -34,20 +38,15 @@ class SecurityWall
 
     public function isLogged(): self
     {
-        //cache results
-        $jwtDetails = JWT::decode($this->jwt, new Key($this->secret, 'HS256'));
-        $this->jwt = (array)$jwtDetails;
-        $this->auth = $this->authRepository->findOneBy(['id' => ((array)$jwtDetails)['user_id']]);
+        $data = $this->jwtService->getUserFromToken($this->jwt, $this->secret);
+        $this->exp = $data['exp'];
+        $this->auth = $data['user'];
         return $this;
     }
 
     public function isExpDateValid(): self
     {
-        $now = new \DateTimeImmutable();
-        $now = $now->getTimestamp();
-        if ($this->jwt['exp'] < $now) {
-            throw new BadRequestHttpException("JWT expired");
-        }
+        $this->jwtService->isTokenExpired($this->exp);
         return $this;
     }
 
