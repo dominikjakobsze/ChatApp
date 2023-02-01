@@ -6,12 +6,13 @@ use App\Entity\Auth;
 use App\Repository\AuthRepository;
 use Firebase\JWT\JWT;
 use Firebase\JWT\Key;
+use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 
 class SecurityWall
 {
     private AuthRepository $authRepository;
     private string $secret;
-    private string $jwt;
+    private string|array $jwt;
     private Auth $auth;
 
     public function __construct(AuthRepository $authRepository)
@@ -35,10 +36,23 @@ class SecurityWall
     {
         //cache results
         $jwtDetails = JWT::decode($this->jwt, new Key($this->secret, 'HS256'));
-        //check if expired using ((array)$jwtDetails)['exp']
-        $date = new \DateTimeImmutable();
-        dd(((array)$jwtDetails)['exp'], $date->getTimestamp());
+        $this->jwt = (array)$jwtDetails;
         $this->auth = $this->authRepository->findOneBy(['id' => ((array)$jwtDetails)['user_id']]);
         return $this;
+    }
+
+    public function isExpDateValid(): self
+    {
+        $now = new \DateTimeImmutable();
+        $now = $now->getTimestamp();
+        if ($this->jwt['exp'] < $now) {
+            throw new BadRequestHttpException("JWT expired");
+        }
+        return $this;
+    }
+
+    public function getAuth(): Auth
+    {
+        return $this->auth;
     }
 }
