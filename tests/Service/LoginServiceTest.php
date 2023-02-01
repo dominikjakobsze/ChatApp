@@ -6,6 +6,7 @@ use App\Entity\Auth;
 use App\Repository\AuthRepository;
 use App\Service\LoginService;
 use PHPUnit\Framework\TestCase;
+use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 
 class LoginServiceTest extends TestCase
 {
@@ -24,5 +25,13 @@ class LoginServiceTest extends TestCase
         $auth = new Auth();
         $this->authRepositoryMock->method('findOneBy')->with(['email' => $email])->willReturn($auth);
         $this->assertEquals($auth, $this->loginService->getUserFromEmail($email));
+    }
+
+    public function testUserFromEmailNotFound()
+    {
+        $email = 'dominik@wp.pl';
+        $this->authRepositoryMock->method('findOneBy')->with(['email' => $email])->willReturn(null);
+        $this->expectException(BadRequestHttpException::class);
+        $this->loginService->getUserFromEmail($email);
     }
 }
