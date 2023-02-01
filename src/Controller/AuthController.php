@@ -4,6 +4,7 @@ namespace App\Controller;
 
 use App\Form\LoginForm;
 use App\Form\RegisterForm;
+use App\Service\JWTService;
 use App\Service\LoginService;
 use App\Service\RegisterService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -40,10 +41,11 @@ class AuthController extends AbstractController
     /**
      * @param Request $request
      * @param LoginService $loginService
+     * @param JWTService $JWTService
      * @return JsonResponse
      */
     #[Route('/api/login', name: 'AuthController_loginUser', methods: ['POST'])]
-    public function loginUser(Request $request, LoginService $loginService): JsonResponse
+    public function loginUser(Request $request, LoginService $loginService, JWTService $JWTService): JsonResponse
     {
         $form = $this->createForm(LoginForm::class, null, [
             'csrf_protection' => false
@@ -52,6 +54,7 @@ class AuthController extends AbstractController
         if ($form->isSubmitted() && $form->isValid()) {
             $auth = $loginService->getUserFromEmail($form->getData()['email']);
             $loginService->validatePassword($auth, $form->getData()['password']);
+            $JWTService->generateTokenWithUserInfo($auth, $this->getParameter('app.jwt'));
             return $this->json(true);
         }
         throw new BadRequestHttpException("Email or password is invalid");
