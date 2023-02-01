@@ -34,4 +34,12 @@ class LoginServiceTest extends TestCase
         $this->expectException(BadRequestHttpException::class);
         $this->loginService->getUserFromEmail($email);
     }
+
+    public function testPasswordIsValid()
+    {
+        $password = 'password';
+        $auth = new Auth();
+        $auth->setPassword(password_hash($password, PASSWORD_BCRYPT));
+        $this->assertTrue($this->loginService->validatePassword($auth, $password));
+    }
 }
