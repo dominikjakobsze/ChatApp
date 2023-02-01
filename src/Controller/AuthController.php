@@ -52,9 +52,10 @@ class AuthController extends AbstractController
     #[Route('/api/login', name: 'AuthController_loginUser', methods: ['POST'])]
     public function loginUser(Request $request, LoginService $loginService, JWTService $JWTService): JsonResponse
     {
-        dd($this->security->setKey($this->getParameter('app.jwt'))
-            ->setJwt($request->headers->get('Authorization'))
-            ->isLogged());
+//        dd($this->security->setKey($this->getParameter('app.jwt'))
+//            ->setJwt($request->headers->get('JWT-Authorization'))
+//            ->isLogged()
+//        );
         $form = $this->createForm(LoginForm::class, null, [
             'csrf_protection' => false
         ]);
