@@ -42,4 +42,13 @@ class LoginServiceTest extends TestCase
         $auth->setPassword(password_hash($password, PASSWORD_BCRYPT));
         $this->assertTrue($this->loginService->validatePassword($auth, $password));
     }
+
+    public function testPasswordIsInvalid()
+    {
+        $password = 'password';
+        $auth = new Auth();
+        $auth->setPassword(password_hash($password, PASSWORD_BCRYPT));
+        $this->expectException(BadRequestHttpException::class);
+        $this->loginService->validatePassword($auth, 'invalid');
+    }
 }
