@@ -50,7 +50,8 @@ class AuthController extends AbstractController
         ]);
         $form->handleRequest($request)->submit($request->request->all());
         if ($form->isSubmitted() && $form->isValid()) {
-            $loginService->getUserFromEmail($form->getData()['email']);
+            $auth = $loginService->getUserFromEmail($form->getData()['email']);
+            $loginService->validatePassword($auth, $form->getData()['password']);
             return $this->json(true);
         }
         throw new BadRequestHttpException("Email or password is invalid");

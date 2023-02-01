@@ -27,4 +27,17 @@ class LoginService
         }
         return $auth;
     }
+
+    /**
+     * @param Auth $auth
+     * @param string $password
+     * @return bool
+     */
+    public function validatePassword(Auth $auth, string $password): bool
+    {
+        if (!password_verify($password, $auth->getPassword())) {
+            throw new BadRequestHttpException("Password is invalid");
+        }
+        return true;
+    }
 }
