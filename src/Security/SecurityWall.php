@@ -5,9 +5,6 @@ namespace App\Security;
 use App\Entity\Auth;
 use App\Repository\AuthRepository;
 use App\Service\JWTService;
-use Firebase\JWT\JWT;
-use Firebase\JWT\Key;
-use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 
 class SecurityWall
 {

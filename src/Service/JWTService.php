@@ -22,7 +22,7 @@ class JWTService
      * @param $key
      * @return string
      */
-    public function generateTokenWithUserInfo(Auth $auth, $key): string
+    public function generateTokenWithUserInfo(Auth $auth, $secret): string
     {
         $exp = new \DateTimeImmutable();
         $exp = $exp->modify('+1 day')->getTimestamp();
@@ -30,7 +30,7 @@ class JWTService
             'exp' => $exp,
             'user_id' => $auth->getId(),
         ];
-        return JWT::encode($payload, $key, 'HS256');
+        return JWT::encode($payload, $secret, 'HS256');
     }
 
     public function getUserFromToken(string $jwt, $secret): array
