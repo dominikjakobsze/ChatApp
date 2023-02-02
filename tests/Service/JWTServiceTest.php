@@ -6,6 +6,7 @@ use App\Entity\Auth;
 use App\Repository\AuthRepository;
 use App\Service\JWTService;
 use PHPUnit\Framework\TestCase;
+use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 
 class JWTServiceTest extends TestCase
 {
@@ -51,4 +52,16 @@ class JWTServiceTest extends TestCase
         $this->assertNotNull($user['user']);
         $this->assertNotNull($user['exp']);
     }
+
+    public function testTokenIsExpired(): void
+    {
+        $this->expectException(BadRequestHttpException::class);
+        $this->jwtService->isTokenExpired(150000);
+    }
+
+    public function testTokenIsNotExpired(): void
+    {
+        $this->assertTrue($this->jwtService->isTokenExpired(2000000000));
+    }
+
 }
