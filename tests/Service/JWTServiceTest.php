@@ -1,5 +1,5 @@
 <?php
-
+//php bin/phpunit --testdox
 namespace App\Tests\Service;
 
 use App\Entity\Auth;

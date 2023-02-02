@@ -1,11 +1,15 @@
 import React from "react";
+import HomeMain from "./pages/home/HomeMain";
+import Menu from "./ui/Menu";
+import Container from "./ui/Container";
 
 const Main = () => {
     return (
         <>
-            <div className="text-3xl font-bold underline">
-                Hello world!
-            </div>
+            <Container>
+                <Menu/>
+                <HomeMain/>
+            </Container>
         </>
     );
 };

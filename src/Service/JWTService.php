@@ -19,7 +19,7 @@ class JWTService
 
     /**
      * @param Auth $auth
-     * @param $key
+     * @param $secret
      * @return string
      */
     public function generateTokenWithUserInfo(Auth $auth, $secret): string

@@ -6,6 +6,7 @@
  */
 
 import Main from "./Main";
+import "./app.css";
 
 console.log('Hello Webpack Encore! Edit me in assets/app.js');
 import React from "react";
