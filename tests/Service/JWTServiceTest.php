@@ -25,4 +25,30 @@ class JWTServiceTest extends TestCase
         $jwt = $this->jwtService->generateTokenWithUserInfo($auth, 'secret');
         $this->assertIsString($jwt);
     }
+
+    public function testUserInfoIsReturnedNotOk(): void
+    {
+        $auth = $this->createMock(Auth::class);
+        $auth->method('getId')->willReturn(2);
+        $jwt = $this->jwtService->generateTokenWithUserInfo($auth, 'secret');
+        $this->authRepositoryMock->method('findOneBy')->willReturn(null);
+        $user = $this->jwtService->getUserFromToken($jwt, 'secret');
+        $this->assertArrayHasKey('exp', $user);
+        $this->assertArrayHasKey('user', $user);
+        $this->assertNull($user['user']);
+        $this->assertNotNull($user['exp']);
+    }
+
+    public function testUserInfoIsReturnedOk(): void
+    {
+        $auth = $this->createMock(Auth::class);
+        $auth->method('getId')->willReturn(2);
+        $jwt = $this->jwtService->generateTokenWithUserInfo($auth, 'secret');
+        $this->authRepositoryMock->method('findOneBy')->willReturn(new Auth());
+        $user = $this->jwtService->getUserFromToken($jwt, 'secret');
+        $this->assertArrayHasKey('exp', $user);
+        $this->assertArrayHasKey('user', $user);
+        $this->assertNotNull($user['user']);
+        $this->assertNotNull($user['exp']);
+    }
 }
